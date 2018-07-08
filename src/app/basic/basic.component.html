@@ -1,0 +1,25 @@
+<section class="todoapp">
+  <header class="header">
+    <h1>Todo</h1>
+    
+    <input class="new-todo" [(ngModel)]="newTodo" placeholder="What needs to be done?" autofocus>
+    <button (click)="addTodo()">Add</button>
+
+    <li *ngFor="let todo of todos" [ngClass]="{completed: todo.isDone, editing: todo.editing}" >
+      <div class="view">
+        <label (dblclick)="todo.editing = true">{{todo.title}}</label>
+        <button class="destroy" (click)="destroyTodo(todo)">Delete</button>
+
+        <input class="edit"
+         #updatedTodo
+         [value]="todo.title"
+         (blur)="updateTodo(todo, updatedTodo.value)"
+         (keyup.escape)="todo.editing = false"
+         (keyup.enter)="updateTodo(todo, updatedTodo.value)">
+
+      </div>
+    </li>
+
+  </header>
+
+</section>
