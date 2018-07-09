@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { HttpClient } from '@angular/common/http';
+
 let todos = [
   { _id: 1, title: 'Install Angular CLI', isDone: true },
   { _id: 2, title: 'Style app', isDone: true },
@@ -7,31 +10,29 @@ let todos = [
 ];
 @Injectable()
 export class TodoService {
-  constructor() { }
-	get(){
-	    return new Promise(resolve => resolve(todos));
-	}
 
-  	add(data) {
-	  return new Promise(resolve => {
-	    todos.push(data);
-	    resolve(data);
-	  });
-	}
+		private serverURL = 'http://18.222.191.7/';
 
-	put(data) {
-	  return new Promise(resolve => {
-	    let index = todos.findIndex(todo => todo._id === data._id);
-	    todos[index].title = data.title;
-	    resolve(data);
-	  });
-	}
+		constructor(private http: HttpClient) { }
+		
 
-	delete(id) {
-	  return new Promise(resolve => {
-	    let index = todos.findIndex(todo => todo._id === id);
-	    todos.splice(index, 1);
-	    resolve(true);
-	  });
-	}
+		apiTokenRequestGet(url): Observable<any> {
+			let appurl = this.serverURL+url ;
+			return this.http.get(appurl);
+		}
+
+		apiTokenRequestPost(url, data): Observable<any> {
+			let appurl = this.serverURL+url ;
+			return this.http.post(appurl, data);
+		}
+
+		apiTokenRequestPut(url, data): Observable<any> {
+			let appurl = this.serverURL+url ;
+			return this.http.put(appurl, data);
+		}
+		
+		apiTokenRequestDelete(url, id): Observable<any> {
+			let appurl = this.serverURL+url ;
+			return this.http.delete(appurl, id);
+		}
 }

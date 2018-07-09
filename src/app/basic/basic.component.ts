@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TodoService } from '../todo/todo.service';
+import { ReactiveFormsModule, FormsModule, FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-basic',
@@ -8,44 +9,89 @@ import { TodoService } from '../todo/todo.service';
   providers: [TodoService]
 })
 export class BasicComponent implements OnInit {
-	private newTodo;
+		private todos;
+		private activeTasks;
+		
+		productForm: FormGroup;
+		title: FormControl;
+		description: FormControl;
+		price: FormControl;
 
+		selectedProduct: any = {};
+		productEdit: boolean = false;
 
-	private todos;
-  	private activeTasks;
   	constructor(private todoService: TodoService) { }
 
-  	addTodo(){
-	  this.todoService.add({ title: this.newTodo, isDone: false }).then(() => {
-	    return this.getTodos();
-	  }).then(() => {
-	    this.newTodo = ''; 
-	  });
-	}
-
-	getTodos(){
-	    return this.todoService.get().then(todos => {
-	      this.todos = todos;
-	      this.activeTasks = this.todos.filter(todo => todo.isDone).length;
-	    });
-  	}
-
-  	updateTodo(todo, newValue) {
-	  todo.title = newValue;
-	  return this.todoService.put(todo).then(() => {
-	    todo.editing = false;
-	    return this.getTodos();
-	  });
-	}
-
-	destroyTodo(todo){
-	  this.todoService.delete(todo._id).then(() => {
-	    return this.getTodos();
-	  });
-	}
-
   	ngOnInit() {
+			this.createFormControls();
+			this.createForm();
+
   		this.getTodos();
+		}
+		
+		createFormControls() {
+			this.title = new FormControl('', Validators.required);
+			this.description = new FormControl('', Validators.required);
+			this.price = new FormControl('', Validators.required);
+		}
+
+		createForm() {
+			this.productForm = new FormGroup({
+				title: this.title,
+				description: this.description,
+				price: this.price,
+			});
+		}
+
+		getTodos(){
+			return this.todoService.apiTokenRequestGet('organization')
+				.subscribe((res: any) => {
+					this.todos = res;
+				}, error => {
+			});
   	}
+
+  	saveProduct(){
+			let data = this.productForm.value;
+			if(this.productEdit){
+				return this.todoService.apiTokenRequestPut('organization', data)
+					.subscribe((res: any) => {
+						this.getTodos();
+						this.productForm.reset();
+						this.productEdit = false;
+					}, error => {
+				});
+			}else{
+				return this.todoService.apiTokenRequestPost('organization', data)
+					.subscribe((res: any) => {
+						this.getTodos();
+						this.productForm.reset();
+					}, error => {
+				});
+			}
+		}
+
+		updateProduct(todo){
+			let data = this.productForm.value;
+			return this.todoService.apiTokenRequestPut('organization', data)
+				.subscribe((res: any) => {
+					this.getTodos();
+					this.productForm.reset();
+				}, error => {
+			});
+		}
+		
+		EditProduct(todo){
+			this.selectedProduct = todo;
+			this.productEdit = true;
+		}
+
+		destroyTodo(id){
+			return this.todoService.apiTokenRequestDelete('organization', id)
+				.subscribe((res: any) => {
+					this.getTodos();
+				}, error => {
+			});
+		}
 
 }

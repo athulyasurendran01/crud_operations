@@ -1,0 +1,8 @@
+@import '~bootstrap/dist/css/bootstrap.min.css';
+
+li{
+    padding: 1em;
+}
+.destroy{
+    float: right;
+}

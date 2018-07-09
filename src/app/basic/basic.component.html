@@ -1,25 +1,59 @@
 <section class="todoapp">
-  <header class="header">
     <h1>Todo</h1>
     
-    <input class="new-todo" [(ngModel)]="newTodo" placeholder="What needs to be done?" autofocus>
-    <button (click)="addTodo()">Add</button>
-
-    <li *ngFor="let todo of todos" [ngClass]="{completed: todo.isDone, editing: todo.editing}" >
-      <div class="view">
-        <label (dblclick)="todo.editing = true">{{todo.title}}</label>
-        <button class="destroy" (click)="destroyTodo(todo)">Delete</button>
-
-        <input class="edit"
-         #updatedTodo
-         [value]="todo.title"
-         (blur)="updateTodo(todo, updatedTodo.value)"
-         (keyup.escape)="todo.editing = false"
-         (keyup.enter)="updateTodo(todo, updatedTodo.value)">
-
+    <div class="row">
+      <div class="col-md-4 input_group">
+          
+          <form novalidate [formGroup]="productForm" (ngSubmit)="productForm.valid && saveProduct()">
+              <div class="container-fluid">
+                 <div class="row form-content">
+                    <div class="col-xs-12 col-sm-12">
+                       <div class="form-group">
+                          <label>Title</label>
+                          <input type="text" class="form-control profile-input" placeholder="Title" id="title" [ngModel]="selectedProduct.title"
+                             formControlName="title">
+                       </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-12">
+                       <div class="form-group">
+                          <label>Descriprtion </label>
+                          <input type="text" class="form-control profile-input" placeholder="Descriprtion" id="description" [ngModel]="selectedProduct.description"
+                             formControlName="description">
+                       </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-12">
+                        <div class="form-group">
+                           <label>Price </label>
+                           <input type="text" class="form-control profile-input" placeholder="Price" id="price" [ngModel]="selectedProduct.price"
+                              formControlName="price">
+                        </div>
+                     </div>
+                 </div>
+                 <div class="form-button add_btn">
+                    <button type="submit" [disabled]="!productForm.valid" class="btn btn-info save_btn">Save</button>
+                 </div>
+              </div>
+          </form>
       </div>
-    </li>
-
-  </header>
-
+      <div class="col-md-4">
+          <ul>
+              <li *ngFor="let todo of todos" [ngClass]="{completed: todo.isDone, editing: todo.editing}" >
+                <div class="view">
+                  <label (dblclick)="todo.editing = true">{{todo.title}}</label>
+                  <div class="destroy">
+                    <button class="btn btn-danger" (click)="EditProduct(todo)">Edit</button> &nbsp;
+                    <button class="btn btn-danger" (click)="destroyTodo(todo.id)">Delete</button>
+                  </div>
+                  
+                  <!-- <input class="edit"
+                   #updatedTodo
+                   [value]="todo.title"
+                   (blur)="updateTodo(todo, updatedTodo.value)"
+                   (keyup.escape)="todo.editing = false"
+                   (keyup.enter)="updateTodo(todo, updatedTodo.value)"> -->
+                </div>
+              </li>
+            </ul>
+      </div>
+    </div>
 </section>
